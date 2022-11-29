@@ -5,9 +5,11 @@ import com.example.caderno.controller.dto.NotaResponse;
 import com.example.caderno.dataprovider.entity.NotaEntity;
 import com.example.caderno.dataprovider.repository.NotaRepository;
 import com.example.caderno.dataprovider.repository.TagRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,9 @@ public class NotaController {
 
     @GetMapping
     public ResponseEntity encontraNotas(){
-        notaRepository.save(new NotaEntity("Titulo", "Nota"));
-        notaRepository.save(new NotaEntity("Titulo1", "Nota1"));
-        notaRepository.save(new NotaEntity("Titulo2", "Nota2"));
 
         List<NotaEntity> entityList = notaRepository.findAll();
+
         List<NotaResponse> responseList = new ArrayList<>();
         for (NotaEntity entity: entityList) {
             responseList.add(
@@ -42,8 +42,13 @@ public class NotaController {
     }
 
     @PostMapping
-    public NotaResponse salvaNota(@RequestBody NotaRequest notaRequest){
-        //logica
-        return new NotaResponse(notaRequest.getTitulo(), notaRequest.getNota());
+    public ResponseEntity salvarNota(@RequestBody NotaRequest notaRequest){
+        NotaEntity entity = notaRepository.save(new NotaEntity(notaRequest.getTitulo()
+                , notaRequest.getNota()));
+
+        return new ResponseEntity(
+                new NotaResponse(entity.getTitulo(), entity.getNota()),
+                HttpStatus.CREATED
+        );
     }
 }
