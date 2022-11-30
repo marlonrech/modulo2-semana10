@@ -28,7 +28,6 @@ public class NotaController {
 
     @GetMapping
     public ResponseEntity<List<NotaResponse>> encontraNotas(){
-
         List<NotaEntity> entityList = notaRepository.findAll();
 
         List<NotaResponse> responseList = new ArrayList<>();
