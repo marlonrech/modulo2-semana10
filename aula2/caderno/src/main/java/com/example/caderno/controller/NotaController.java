@@ -27,7 +27,7 @@ public class NotaController {
     }
 
     @GetMapping
-    public ResponseEntity encontraNotas(){
+    public ResponseEntity<List<NotaResponse>> encontraNotas(){
 
         List<NotaEntity> entityList = notaRepository.findAll();
 
@@ -41,14 +41,25 @@ public class NotaController {
         return ResponseEntity.ok(responseList);
     }
 
+
     @PostMapping
-    public ResponseEntity salvarNota(@RequestBody NotaRequest notaRequest){
+    public ResponseEntity<NotaResponse> salvarNota(@RequestBody NotaRequest notaRequest){
         NotaEntity entity = notaRepository.save(new NotaEntity(notaRequest.getTitulo()
                 , notaRequest.getNota()));
 
-        return new ResponseEntity(
+        return new ResponseEntity<NotaResponse>(
                 new NotaResponse(entity.getTitulo(), entity.getNota()),
                 HttpStatus.CREATED
+        );
+    }
+
+    // /nota/1
+    @GetMapping("/{id}")
+    public ResponseEntity<NotaResponse> encontraNotaPorId(@PathVariable Long id){
+        NotaEntity entity = notaRepository.findById(id).get();
+        return new ResponseEntity<NotaResponse>(
+                new NotaResponse(entity.getTitulo(), entity.getNota()),
+                HttpStatus.OK
         );
     }
 }
